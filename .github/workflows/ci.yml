@@ -25,7 +25,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name }}
   GH_OWNER: ${{ github.repository_owner }}
-  GH_REPO: ${{ github.event.workflow_run.head_repository.name }}
+  GH_REPO: ${{ github.event.repository.name }}
+  GIT_SHA: ${{ github.event.workflow_run.head_sha }}
 
 jobs:
   build_test:
