@@ -133,14 +133,13 @@ jobs:
 
             # Image placeholder
             REPO_FULL="${GITHUB_REPOSITORY}"
-
             REPO_LC=$(echo "$REPO_FULL" | tr '[:upper:]' '[:lower:]')
-
             SHA_FULL="${GITHUB_SHA}"
 
-            IMAGE="ghcr.io/${REPO_LC}:sha-${SHA_FULL}"
+            IMAGE=\"ghcr.io/${REPO_LC}:sha-${SHA_FULL}\"
+            ESC_IMAGE=\${IMAGE//\//\\/}
 
-            sed -i "s|__IMAGE__|$IMAGE|g" docker-compose.prod.yml
+            sed -i \"s#__IMAGE__#\${ESC_IMAGE}#\" \$APP_DIR/docker-compose.prod.yml
 
             # sanity
             grep -n 'image:' \$APP_DIR/docker-compose.prod.yml || true
