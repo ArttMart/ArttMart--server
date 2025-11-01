@@ -8,7 +8,7 @@ FROM base AS deps
 COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
-# ---- build (if you had TS/build steps; safe for ESM JS too) ----
+# ---- build ----
 FROM base AS build
 COPY package*.json ./
 RUN npm ci

@@ -1,13 +1,11 @@
 {
   email {LETSENCRYPT_EMAIL}
-  # optional: admin off
 }
 
 {APP_DOMAIN} {
   encode zstd gzip
   @health path /healthz
   handle @health {
-    # Fast path for uptime checks
     reverse_proxy api:8080
   }
 
