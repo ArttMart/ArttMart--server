@@ -24,6 +24,8 @@ concurrency:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name }}
+  GH_OWNER: ${{ github.repository_owner }}
+  GH_REPO: ${{ github.event.workflow_run.head_repository.name }}
 
 jobs:
   build_test:
@@ -132,12 +134,10 @@ jobs:
             sed -i 's/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g' ${APP_DIR}/Caddyfile
 
             # Image placeholder
-            REPO_LC=\$(echo '${{ github.event.workflow_run.head_repository.name }}' | tr '[:upper:]' '[:lower:]')
-            OWNER_LC=\$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
-            IMAGE=\"ghcr.io/${OWNER_LC}/\${REPO_LC}:sha-${{ env.GIT_SHA }}\"
-
+            REPO_LC=\$(echo '${{ env.GH_REPO }}' | tr '[:upper:]' '[:lower:]')
+            OWNER_LC=\$(echo '${{ env.GH_OWNER }}' | tr '[:upper:]' '[:lower:]')
+            IMAGE=\"ghcr.io/\${OWNER_LC}/\${REPO_LC}:sha-${{ env.GIT_SHA }}\"
             ESC_IMAGE=\${IMAGE//\//\\/}
-
             sed -i \"s#__IMAGE__#\${ESC_IMAGE}#\" \$APP_DIR/docker-compose.prod.yml
 
             # sanity
