@@ -132,11 +132,10 @@ jobs:
             sed -i 's/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g' ${APP_DIR}/Caddyfile
 
             # Image placeholder
-            REPO_FULL="${GITHUB_REPOSITORY}"
-            REPO_LC=$(echo "$REPO_FULL" | tr '[:upper:]' '[:lower:]')
-            SHA_FULL="${GITHUB_SHA}"
+            REPO_LC=\$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
 
-            IMAGE=\"ghcr.io/${REPO_LC}:sha-${SHA_FULL}\"
+            IMAGE=\"ghcr.io/${REPO_LC}:sha-${GITHUB_SHA}\"
+
             ESC_IMAGE=\${IMAGE//\//\\/}
 
             sed -i \"s#__IMAGE__#\${ESC_IMAGE}#\" \$APP_DIR/docker-compose.prod.yml
