@@ -1,16 +1,9 @@
-# Building the docker image and pushing to GHCR
 name: Build & Push (GHCR)
 
 on:
   workflow_run:
-    workflows: [ "ci" ]
-    types: [ completed ]
-
-  workflow_dispatch:
-  push:
-    branches: ['main']
-    paths-ignore:
-      - '**.md'
+    workflows: ['ci']
+    types: ['completed']
 
 permissions:
   contents: read
