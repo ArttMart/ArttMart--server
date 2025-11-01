@@ -41,7 +41,7 @@ jobs:
   build-and-push:
     name: Build and push to GHCR
     needs: [build_test]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.ci.result == 'success' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build_test.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -83,7 +83,8 @@ jobs:
 
   deploy:
     name: Deploy to Droplet
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.result == 'success' }}
+    needs: [build-and-push]
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build-and-push.result == 'success' }}
 
     runs-on: ubuntu-latest
 
