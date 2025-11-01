@@ -1,4 +1,4 @@
-name: CI Build Deploy
+name: CI - Build - Deploy
 on:
   workflow_dispatch:
 
@@ -90,7 +90,6 @@ jobs:
 
     env:
       APP_DIR: /opt/ecommerce
-      GIT_SHA: ${{ github.event.workflow_run.head_sha }}
 
     steps:
       - name: Checkout repo at built commit
@@ -117,7 +116,6 @@ jobs:
 
       - name: Push manifests to server & template vars
         run: |
-
           # rsync deploy/ folder (contains Caddyfile + docker-compose.prod.yml)
           rsync -avz -e "ssh -p ${{ secrets.DO_SSH_PORT || 22 }}" \
             deploy/ ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:${APP_DIR}/
@@ -134,16 +132,15 @@ jobs:
             sed -i 's/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g' ${APP_DIR}/Caddyfile
 
             # Image placeholder
-            FULL="${{ github.event.workflow_run.head_repository.full_name }}" 
-            OWNER="${FULL%%/*}"
-            REPO="${FULL##*/}"
+            REPO_FULL="${GITHUB_REPOSITORY}"
 
-            OWNER_LC="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
-            REPO_LC="$(echo "$REPO"  | tr '[:upper:]' '[:lower:]')"
+            REPO_LC=$(echo "$REPO_FULL" | tr '[:upper:]' '[:lower:]')
 
-            IMAGE=\"ghcr.io/${OWNER_LC}/${REPO_LC}:sha-${{ env.GIT_SHA }}\"
+            SHA_FULL="${GITHUB_SHA}"
 
-            ESC_IMAGE=\${IMAGE//\//\\/}
+            IMAGE="ghcr.io/${REPO_LC}:sha-${SHA_FULL}"
+
+            ESC_IMAGE=${IMAGE//\//\\/}
 
             sed -i \"s#__IMAGE__#\${ESC_IMAGE}#\" \$APP_DIR/docker-compose.prod.yml
 
