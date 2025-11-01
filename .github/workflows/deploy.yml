@@ -11,19 +11,12 @@ permissions:
 
 jobs:
   deploy:
-    if: >
-      ${{
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.event == 'push' &&
-        github.event.workflow_run.head_branch == 'main'
-      }}
-      
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
+
     runs-on: ubuntu-latest
 
     env:
       APP_DIR: /opt/ecommerce
-      GH_OWNER: ${{ github.repository_owner }}
-      GH_REPO: ${{ github.event.workflow_run.head_repository.name }}
       GIT_SHA: ${{ github.event.workflow_run.head_sha }}
 
     steps:
@@ -44,7 +37,7 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -4 -p "${{ secrets.DO_SSH_PORT || 22 }}" -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-      
+
       - name: SSH smoke test
         run: |
           ssh -p ${{ secrets.DO_SSH_PORT || 22 }} ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} "echo 'connected to:' \$(hostname) && mkdir -p /opt/ecommerce && ls -la /opt/ecommerce"
@@ -68,10 +61,17 @@ jobs:
             sed -i 's/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g' ${APP_DIR}/Caddyfile
 
             # Image placeholder
-            REPO_LC=\$(echo '${{ env.GH_REPO }}' | tr '[:upper:]' '[:lower:]')
-            OWNER_LC=\$(echo '${{ env.GH_OWNER }}' | tr '[:upper:]' '[:lower:]')
+            FULL="${{ github.event.workflow_run.head_repository.full_name }}" 
+            OWNER="${FULL%%/*}"
+            REPO="${FULL##*/}"
+
+            OWNER_LC="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
+            REPO_LC="$(echo "$REPO"  | tr '[:upper:]' '[:lower:]')"
+            
             IMAGE=\"ghcr.io/${OWNER_LC}/${REPO_LC}:sha-${{ env.GIT_SHA }}\"
+            
             ESC_IMAGE=\${IMAGE//\//\\/}
+
             sed -i \"s#__IMAGE__#\${ESC_IMAGE}#\" \$APP_DIR/docker-compose.prod.yml
 
             # sanity
