@@ -1,3 +1,4 @@
+# Deploying the service using the image built in previous step
 name: Deploy (Droplet)
 
 on:
