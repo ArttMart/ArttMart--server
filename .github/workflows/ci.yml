@@ -139,6 +139,7 @@ jobs:
             OWNER_LC=\$(echo '${{ env.GH_OWNER }}' | tr '[:upper:]' '[:lower:]')
             IMAGE=\"ghcr.io/\${OWNER_LC}/\${REPO_LC}:sha-${{ env.GIT_SHA }}\"
             ESC_IMAGE=\${IMAGE//\//\\/}
+            
             sed -i \"s#__IMAGE__#\${ESC_IMAGE}#\" \$APP_DIR/docker-compose.prod.yml
 
             # sanity
