@@ -139,7 +139,9 @@ jobs:
             set -Eeuo pipefail
             APP_DIR=${{env.APP_DIR}}
 
-            "echo '--- /opt/ecommerce/Caddyfile ---'; cat /opt/ecommerce/Caddyfile; echo '-------------------------------'"
+            echo '--- ${APP_DIR}/Caddyfile ---' 
+            cat ${APP_DIR}/Caddyfile; 
+            echo '-------------------------------'
 
             # Ensure .env exists
             [ -f ${APP_DIR}/.env ] || (echo 'ERROR: .env missing at ${APP_DIR}/.env' && exit 1)
