@@ -129,7 +129,7 @@ jobs:
           sed -i "s/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g" deploy/Caddyfile
 
           # rsync deploy/ folder (contains Caddyfile + docker-compose.prod.yml)
-          # note that if the Caddyfile is changed, the container is to be deleted, the old volume is to be deleted and the container(docker compose) is to be restarted
+          # note that if the Caddyfile is changed, the container(docker compose) is to be deleted, the old volume(project_caddy_config) is to be deleted and the container(docker compose) is to be restarted
           rsync -avz -e "ssh -p ${{ secrets.DO_SSH_PORT || 22 }}" \
             deploy/ ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:${{env.APP_DIR}}/
 
