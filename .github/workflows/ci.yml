@@ -124,7 +124,7 @@ jobs:
         run: |
 
           # Template Caddyfile placeholders
-          sed -i \"s/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g\" deploy/Caddyfile
+          sed -i "s/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g" deploy/Caddyfile
           head -n 5 Caddyfile 
 
           # rsync deploy/ folder (contains Caddyfile + docker-compose.prod.yml)
