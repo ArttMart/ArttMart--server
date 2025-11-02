@@ -44,7 +44,7 @@ jobs:
   build-and-push:
     name: Build and push to GHCR
     needs: [build_test]
-    
+
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build_test.result == 'success' }}
 
     runs-on: ubuntu-latest
@@ -135,7 +135,7 @@ jobs:
             [ -f ${APP_DIR}/.env ] || (echo 'ERROR: .env missing at ${APP_DIR}/.env' && exit 1)
 
             # Template Caddyfile placeholders
-            sed -i 's/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g' ${APP_DIR}/Caddyfile
+            sed -i "s#{APP_DOMAIN}#${{ secrets.APP_DOMAIN }}#g; s#{LETSENCRYPT_EMAIL}#${{ secrets.LE_EMAIL }}#g" ${APP_DIR}/Caddyfile
 
             # Image placeholder
             REPO_LC=\$(echo '${{ env.GH_REPO }}' | tr '[:upper:]' '[:lower:]')
