@@ -28,3 +28,7 @@ yarn-error.log*
 !public/img/users
 public/img/users/*
 !public/img/users/default.jpg
+
+#other
+data
+data/
