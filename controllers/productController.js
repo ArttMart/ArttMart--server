@@ -37,19 +37,24 @@ export const getHomepageData = catchAsync(async (req, res, next) => {
     where: { isFeatured: true },
     order: [['imageType', 'DESC']],
   });
+
+  const trending = await Product.findAll({
+    where: { isTrending: true },
+    order: [['imageType', 'DESC']],
+  });
   // const trending = await Product.findAll({
   //   limit: 5,
   //   where: { isTrending: true },
   // });
   const categories = await Category.findAll({ order: [['name', 'ASC']] });
   const newArrivals = await Product.findAll({
-    limit: 5,
+    limit: 6,
     order: [['createdAt', 'DESC']],
   });
 
   res.status(200).json({
     status: 'success',
-    data: [featured, categories, newArrivals],
+    data: [featured, categories, newArrivals, trending],
   });
 });
 
