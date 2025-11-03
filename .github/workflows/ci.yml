@@ -128,8 +128,11 @@ jobs:
           # Template Caddyfile placeholders
           sed -i "s/{APP_DOMAIN}/${{ secrets.APP_DOMAIN }}/g; s/{LETSENCRYPT_EMAIL}/${{ secrets.LE_EMAIL }}/g" deploy/Caddyfile
 
-          # rsync deploy/ folder (contains Caddyfile + docker-compose.prod.yml)
-          # note that if the Caddyfile is changed, the container(docker compose) is to be deleted, the old volume(project_caddy_config) is to be deleted and the container(docker compose) is to be restarted
+          # rsync deploy/ folder (contains Caddyfile + docker-compose.prod.yml).
+          # Note that if the Caddyfile is changed, the container(docker compose) is to be
+          # deleted, the old volume(project_caddy_config) is to be deleted and the container
+          # (docker compose) is to be restarted. This happens as we don't recreate caddy 
+          # container on each deploy. Only the api container is recreated due to it's image being changed.
           rsync -avz -e "ssh -p ${{ secrets.DO_SSH_PORT || 22 }}" \
             deploy/ ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:${{env.APP_DIR}}/
 
@@ -158,7 +161,7 @@ jobs:
           ssh -p ${{ secrets.DO_SSH_PORT || 22 }} ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} "
             set -Eeuo pipefail
             cd ${APP_DIR}
-            docker compose -f docker-compose.prod.yml pull 
+            docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
             docker image prune -f
           "
