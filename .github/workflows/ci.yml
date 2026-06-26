@@ -90,7 +90,7 @@ jobs:
         run: echo "DIGEST=${{ steps.build.outputs.digest }}"
 
   deploy:
-    name: Deploy to Droplet
+    name: Deploy to Server
     needs: [build-and-push]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build-and-push.result == 'success' }}
 
